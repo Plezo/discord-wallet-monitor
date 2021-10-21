@@ -22,9 +22,14 @@ def format_embed(dict):
 
     contract_info = watch.get_contract_info(dict['to'])
     watchlist = watch.get_watchlist()
-    value_text = watch.wei_to_ether(dict["value"])
+    value_text = f'{watch.wei_to_ether(dict["value"])} ETH'
     if dict['status'] == 'confirmed':
-        value_text += f' ETH\n{dict["gasPriceGwei"]} Gwei'
+        value_text += f'\n{dict["gasPriceGwei"]} Gwei'
+        color_value = "#28B463"
+    elif dict['status'] == 'failed':
+        color_value = "#E74C3C"
+    else:
+        color_value = "#F1C40F"
 
     alias = ''
     for alias_i in watchlist:
@@ -38,7 +43,7 @@ def format_embed(dict):
         [Opensea]({contract_info["opensea_site"]})\n \
         [Website]({contract_info["website"]})\n \
         [Discord]({contract_info["discord"]})',
-        color=discord.Color.blurple()
+        color=color_value
         )
     embed.add_field(name='Value', value=value_text)
     embed.set_author(name=alias, icon_url=watchlist[alias]['image_url'])
