@@ -1,2 +1,2 @@
-DISCORD_TOKEN = "<discord_bot_token_here>"
-BLOCKNATIVE_API_KEY = "<blocknative_api_key_here>"
+DISCORD_TOKEN = "ODk5NDA1ODYxNjE1NzE4NDgx.YWyS-w.kqYyqQg57-_OOqvLQE8vqYNtMRk"
+BLOCKNATIVE_API_KEY = "f9ee002f-4cd5-4182-a798-575092c1b5b8"

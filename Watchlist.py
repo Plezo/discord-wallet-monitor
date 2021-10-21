@@ -2,6 +2,8 @@
 TODO
 - Add proper documentation for class and each function (Use google's styling)
 - Work on edge-cases
+- Allow making changes to json while listening for transactions
+- Figure out why stop() isnt stopping instantly (probably cuz of all the async functions)
 """
 
 import requests
@@ -25,12 +27,12 @@ class Watchlist:
         response = requests.request('GET', url)
         contract_json = json.loads(response.text)
 
-        if type(contract_json) == 'NoneType':
+        if contract_json['collection'] == None:
             formatted_dict = {
                 'address':      'N/A',
                 'name':         'N/A',
                 'description':  'N/A',
-                'image_url':    'N/A',
+                'image_url':    'https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png',
                 'opensea_site': 'N/A',
                 'website':      'N/A',
                 'discord':      'N/A',
