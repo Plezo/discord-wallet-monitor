@@ -1,19 +1,3 @@
-"""
-TODO
-
-- Fix the two errors that are currently avoided on line 66. Make it never crash
-- Add ability to fetch unverified contracts (Only issue is getting their abi since currently we're getting from etherscan
-- Have an "Amount minted in x minutes" (Might have to use database here, one script while:trues the contracts INTO database, another removes ones > the time)
-or try using filter command in web3
-- Add opensea functionality, so return links that are on their opensea, also return icon.
-Maybe make like an "asset" class
-- Fetch amount pending at time of data retrieval
-- Organize code into functions, if name=main, documentation, all that fancy shit
-- Add ability to pocketwatch a wallet address
-- Switch from using while:true to webhooks
-
-"""
-
 import asyncio
 from config import *
 
