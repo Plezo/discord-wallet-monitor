@@ -4,6 +4,7 @@ TODO
 - Work on edge-cases
 - Allow making changes to json while listening for transactions
 - Figure out why stop() isnt stopping instantly (probably cuz of all the async functions)
+- Create new json if watchlist.json doesnt exist
 """
 
 import requests
