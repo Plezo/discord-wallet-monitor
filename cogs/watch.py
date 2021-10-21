@@ -22,7 +22,7 @@ def format_embed(dict):
 
     contract_info = watch.get_contract_info(dict['to'])
     watchlist = watch.get_watchlist()
-    value_text = dict["value"]
+    value_text = watch.wei_to_ether(dict["value"])
     if dict['status'] == 'confirmed':
         value_text += f' ETH\n{dict["gasPriceGwei"]} Gwei'
 

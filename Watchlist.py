@@ -134,7 +134,7 @@ class Watchlist:
         self.watching = False
 
     def wei_to_ether(self, amount):
-        return amount / 1000000000000000000
+        return float(amount) / 1000000000000000000
 
     """ For now this is implemented in the watch.py discord command,
     that is a temporary solution (that will probably end up being permanent tbh)
