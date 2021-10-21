@@ -1,6 +1,7 @@
 """
 TODO
 - Add proper documentation for class and each function (Use google's styling)
+- Work on edge-cases
 """
 
 import requests
@@ -23,17 +24,31 @@ class Watchlist:
 
         response = requests.request('GET', url)
         contract_json = json.loads(response.text)
-        formatted_dict = {
-            'address':      address,
-            'name':         contract_json['collection']['name'],
-            'description':  contract_json['collection']['description'],
-            'image_url':    contract_json['collection']['image_url'],
-            'opensea_site': f'https://opensea.io/collection/{contract_json["collection"]["slug"]}',
-            'website':      contract_json['collection']['external_url'],
-            'discord':      contract_json['collection']['discord_url'],
-            'twitter':      contract_json['collection']['twitter_username'],
-            'instagram':    contract_json['collection']['instagram_username'],
-        }
+
+        if type(contract_json) == 'NoneType':
+            formatted_dict = {
+                'address':      'N/A',
+                'name':         'N/A',
+                'description':  'N/A',
+                'image_url':    'N/A',
+                'opensea_site': 'N/A',
+                'website':      'N/A',
+                'discord':      'N/A',
+                'twitter':      'N/A',
+                'instagram':    'N/A',
+            }
+        else:
+            formatted_dict = {
+                'address':      address,
+                'name':         contract_json['collection']['name'],
+                'description':  contract_json['collection']['description'],
+                'image_url':    contract_json['collection']['image_url'],
+                'opensea_site': f'https://opensea.io/collection/{contract_json["collection"]["slug"]}',
+                'website':      contract_json['collection']['external_url'],
+                'discord':      contract_json['collection']['discord_url'],
+                'twitter':      contract_json['collection']['twitter_username'],
+                'instagram':    contract_json['collection']['instagram_username'],
+            }
 
         return formatted_dict
 
