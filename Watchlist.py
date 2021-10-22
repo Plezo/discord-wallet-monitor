@@ -26,9 +26,7 @@ class Watchlist:
         url = f"https://api.opensea.io/api/v1/asset_contract/{address}"
 
         response = requests.request('GET', url)
-        contract_json = json.loads(response.text)
-
-        if contract_json['collection'] == None:
+        if response.status_code == 404:
             formatted_dict = {
                 'address':      'N/A',
                 'name':         'N/A',
@@ -41,6 +39,7 @@ class Watchlist:
                 'instagram':    'N/A',
             }
         else:
+            contract_json = json.loads(response.text)
             formatted_dict = {
                 'address':      address,
                 'name':         contract_json['collection']['name'],
