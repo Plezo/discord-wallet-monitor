@@ -25,11 +25,11 @@ def format_embed(dict):
     value_text = f'{watch.wei_to_ether(dict["value"])} ETH'
     if dict['status'] == 'confirmed':
         value_text += f'\n{dict["gasPriceGwei"]} Gwei'
-        color_value = "#28B463"
+        color_value = 0x28B463
     elif dict['status'] == 'failed':
-        color_value = "#E74C3C"
+        color_value = 0xE74C3C
     else:
-        color_value = "#F1C40F"
+        color_value = 0xF1C40F
 
     alias = ''
     for alias_i in watchlist:
