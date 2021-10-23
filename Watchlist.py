@@ -5,6 +5,7 @@ TODO
 - Allow making changes to json while listening for transactions
 - Figure out why stop() isnt stopping instantly (probably cuz of all the async functions)
 - Create new json if watchlist.json doesnt exist
+- Display what type of transaction, or atleast if its a transfer or NFT transaction
 """
 
 import requests
@@ -26,7 +27,7 @@ class Watchlist:
         url = f"https://api.opensea.io/api/v1/asset_contract/{address}"
 
         response = requests.request('GET', url)
-        if response.status_code == 404:
+        if response.status_code in [404, 406]:
             formatted_dict = {
                 'address':      'N/A',
                 'name':         'N/A',
