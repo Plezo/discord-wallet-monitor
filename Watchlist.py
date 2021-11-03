@@ -27,7 +27,7 @@ class Watchlist:
         url = f"https://api.opensea.io/api/v1/asset_contract/{address}"
 
         response = requests.request('GET', url)
-        if response.status_code != 202 :
+        if response.status_code != 202:
             formatted_dict = {
                 'address':      'N/A',
                 'name':         'N/A',

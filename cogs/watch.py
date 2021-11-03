@@ -66,13 +66,13 @@ class Watch(commands.Cog):
             for address in watchlist[alias]['addresses']:
                 embed.add_field(name=alias, value=f'[Etherscan](https://etherscan.io/address/{address})\n[Opensea](https://opensea.io/{address})')
 
-        await ctx.reply(embed=embed)
+        await ctx.send(embed=embed)
 
     @commands.command(name='add')
     async def add_watchlist(self, ctx):
         args = ctx.message.content.split(' ')[1:]
         if len(args) < 2:
-            await ctx.reply(embed=discord.Embed(title='Wrong syntax!\nUse the help command'), delete_after=5)
+            await ctx.send(embed=discord.Embed(title='Wrong syntax!\nUse the help command'), delete_after=5)
             return
 
         alias, address = args[0], args[1]
@@ -87,13 +87,13 @@ class Watch(commands.Cog):
             embed.add_field(name='Alias', value=alias)
             embed.add_field(name='Address', value=address)
 
-        await ctx.reply(embed=embed, delete_after=5)
+        await ctx.send(embed=embed, delete_after=5)
 
     @commands.command(name='remove')
     async def remove_watchlist(self, ctx):
         args = ctx.message.content.split(' ')[1:]
         if len(args) < 1:
-            await ctx.reply(embed=discord.Embed(title='Wrong syntax!\nUse the help command'), delete_after=5)
+            await ctx.send(embed=discord.Embed(title='Wrong syntax!\nUse the help command'), delete_after=5)
             return
 
         alias = args[0]
@@ -107,18 +107,18 @@ class Watch(commands.Cog):
             if len(args) > 1:
                 embed.add_field(name='Address', value=args[1])
 
-        await ctx.reply(embed=embed, delete_after=5)
+        await ctx.send(embed=embed, delete_after=5)
 
     @commands.command(name='clear')
     async def clear_watchlist(self, ctx):
         watch.clear_watchlist()
-        await ctx.reply(embed=discord.Embed(title='Cleared Watchlist!'), delete_after=5)
+        await ctx.send(embed=discord.Embed(title='Cleared Watchlist!'), delete_after=5)
 
     @commands.command(name='changepfp', aliases=['newpfp', 'setpfp'])
     async def change_pfp(self, ctx):
         args = ctx.message.content.split(' ')[1:]
         if len(args) < 2:
-            await ctx.reply(embed=discord.Embed(title='Wrong syntax!\nUse the help command'), delete_after=5)
+            await ctx.send(embed=discord.Embed(title='Wrong syntax!\nUse the help command'), delete_after=5)
             return
 
         alias, image_url = args[0], args[1]
@@ -131,13 +131,13 @@ class Watch(commands.Cog):
         else:
             embed = discord.Embed(title=f'Changed picture for {alias}', color=discord.Color.green())
         
-        await ctx.reply(embed=embed, delete_after=5)
+        await ctx.send(embed=embed, delete_after=5)
 
     @commands.command(name='getpfp', aliases=['pfp'])
     async def get_pfp(self, ctx):
         args = ctx.message.content.split(' ')[1:]
         if len(args) < 1:
-            await ctx.reply(embed=discord.Embed(title='Wrong syntax!\nUse the help command'), delete_after=5)
+            await ctx.send(embed=discord.Embed(title='Wrong syntax!\nUse the help command'), delete_after=5)
             return
 
         alias = args[0]
@@ -149,7 +149,7 @@ class Watch(commands.Cog):
             embed = discord.Embed(color=discord.Color.green())
             embed.set_image(url=result)
         
-        await ctx.reply(embed=embed, delete_after=5)
+        await ctx.send(embed=embed, delete_after=5)
 
     @commands.command(name='watching')
     async def is_watching(self, ctx):
@@ -158,43 +158,48 @@ class Watch(commands.Cog):
         else:
             embed = discord.Embed(title='Not Watching!', color=discord.Color.red())
 
-        await ctx.reply(embed=embed, delete_after=5)
+        await ctx.send(embed=embed, delete_after=5)
 
     @commands.command(name='start', aliases=['watch'])
     async def start_watching(self, ctx):
 
         if watch.is_watching():
-            await ctx.reply(embed=discord.Embed(title='Already running!', color=discord.Color.red()), delete_after=5)
+            await ctx.send(embed=discord.Embed(title='Already running!', color=discord.Color.red()), delete_after=5)
             return
 
         watchlist = watch.get_watchlist()
         watch.watching = True
         url = 'wss://api.blocknative.com/v0'
+
         async with websockets.connect(url) as ws:
-            await ws.recv()
-            await watch.verify_api(ws)
-            for alias in watchlist:
-                for address in watchlist[alias]['addresses']:
-                    await watch.subscribe_address(ws, address)
-                    await asyncio.sleep(1)
+            try:
+                await ws.recv()
+                await watch.verify_api(ws)
+                for alias in watchlist:
+                    for address in watchlist[alias]['addresses']:
+                        await watch.subscribe_address(ws, address)
+                        await asyncio.sleep(1)
 
-            await ctx.reply(embed=discord.Embed(title='Started!', color=discord.Color.gold()))
+                await ctx.send(embed=discord.Embed(title='Started!', color=discord.Color.gold()))
 
-            while watch.is_watching():
-                result = await ws.recv()
-                result_json = json.loads(result)['event']['transaction']
-                filtered_json = dict()
+                while watch.is_watching():
+                    result = await ws.recv()
+                    result_json = json.loads(result)['event']['transaction']
+                    filtered_json = dict()
 
-                filtered_keys = ['watchedAddress', 'status', 'hash', 'from', 'to', 'value', 'gasPriceGwei']
-                for key in result_json:
-                    if key in filtered_keys:
-                        filtered_json[key] = result_json[key]
+                    filtered_keys = ['watchedAddress', 'status', 'hash', 'from', 'to', 'value', 'gasPriceGwei']
+                    for key in result_json:
+                        if key in filtered_keys:
+                            filtered_json[key] = result_json[key]
 
-                # Checks if transaction is being sent FROM our watchlist address (i.e. mint)
-                if filtered_json['from'].lower() == filtered_json['watchedAddress'].lower():
-                    await ctx.send(embed=format_embed(filtered_json))
-
-            print('Stopped watching')
+                    # Checks if transaction is being sent FROM our watchlist address (i.e. mint)
+                    if filtered_json['from'].lower() == filtered_json['watchedAddress'].lower():
+                        await ctx.send(embed=format_embed(filtered_json))
+            except:
+                print('Websocket exception -- Closing connection')
+                await ctx.send(embed=discord.Embed(title='Closing connection...', color=discord.Color.red()))
+                ws.close()
+                watch.stop_watching()
 
     @commands.command(name='test_embed')
     async def test(self, ctx):
@@ -253,7 +258,7 @@ class Watch(commands.Cog):
     @commands.command(name='stop')
     async def stop_watching(self, ctx):
         watch.stop_watching()
-        await ctx.reply(embed=discord.Embed(title='Will stop watching after next notification'), delete_after=5)
+        await ctx.send(embed=discord.Embed(title='Will stop watching after next notification'), delete_after=5)
 
 def setup(bot):
     bot.add_cog(Watch(bot))
